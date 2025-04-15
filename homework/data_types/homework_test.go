@@ -1,15 +1,25 @@
 package main
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
+	"unsafe"
 )
 
 // go test -v homework_test.go
 
 func ToLittleEndian(number uint32) uint32 {
-	return 0 // need to implement
+	var result uint32
+
+	size := unsafe.Sizeof(number)
+	resultPointer := unsafe.Pointer(&result)
+
+	for i := range size {
+		numberShift := number >> ((size - 1 - i) * 8)
+		*(*uint8)(unsafe.Add(resultPointer, i)) = *(*uint8)(unsafe.Pointer(&numberShift))
+	}
+
+	return result
 }
 
 func TestСonversion(t *testing.T) {
