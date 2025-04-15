@@ -38,7 +38,6 @@ func (q *CircularQueue) Pop() bool {
 		return false
 	}
 
-	q.values[q.front] = 0
 	q.size--
 	q.front = (q.front + 1) % len(q.values)
 
@@ -58,7 +57,10 @@ func (q *CircularQueue) Back() int {
 		return -1
 	}
 
-	return q.values[(q.back+len(q.values)-1)%len(q.values)]
+	capacity := len(q.values)
+	lastIndex := (q.back + capacity - 1) % capacity
+
+	return q.values[lastIndex]
 }
 
 func (q *CircularQueue) Empty() bool {
