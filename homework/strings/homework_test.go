@@ -28,6 +28,10 @@ func (b *COWBuffer) Clone() COWBuffer {
 }
 
 func (b *COWBuffer) Close() {
+	if b.refs != nil && *(b.refs) > 0 {
+		*(b.refs)--
+	}
+
 	b.data, b.refs = nil, nil
 }
 
@@ -36,9 +40,10 @@ func (b *COWBuffer) Update(index int, value byte) bool {
 		return false
 	}
 
-	if *b.refs > 0 {
+	if *(b.refs) > 0 {
+		*(b.refs)--
 		b.data = append([]byte(nil), b.data...)
-		*b.refs = 0
+		b.refs = new(int)
 	}
 
 	b.data[index] = value
