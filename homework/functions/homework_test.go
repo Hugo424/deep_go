@@ -7,21 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Map(data []int, action func(int) int) []int {
-	// need to implement
-	return nil
-}
-
-func Filter(data []int, action func(int) bool) []int {
-	// need to implement
-	return nil
-}
-
-func Reduce(data []int, initial int, action func(int, int) int) int {
-	// need to implement
-	return 0
-}
-
 func TestMap(t *testing.T) {
 	tests := map[string]struct {
 		data   []int
