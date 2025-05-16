@@ -24,7 +24,6 @@ func NewContainer() *Container {
 }
 
 func (c *Container) RegisterType(name string, constructor interface{}) {
-	// зарегистрировать конструктор по созданию типа
 	if constructor == nil {
 		return
 	}
