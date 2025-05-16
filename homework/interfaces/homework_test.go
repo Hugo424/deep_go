@@ -8,33 +8,6 @@ import (
 
 // go test -v homework_test.go
 
-type UserService struct {
-	// not need to implement
-	NotEmptyStruct bool
-}
-type MessageService struct {
-	// not need to implement
-	NotEmptyStruct bool
-}
-
-type Container struct {
-	// need to implement
-}
-
-func NewContainer() *Container {
-	// need to implement
-	return &Container{}
-}
-
-func (c *Container) RegisterType(name string, constructor interface{}) {
-	// need to implement
-}
-
-func (c *Container) Resolve(name string) (interface{}, error) {
-	// need to implement
-	return nil, nil
-}
-
 func TestDIContainer(t *testing.T) {
 	container := NewContainer()
 	container.RegisterType("UserService", func() interface{} {
