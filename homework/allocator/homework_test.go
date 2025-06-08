@@ -15,21 +15,20 @@ func Defragment(memory []byte, pointers []unsafe.Pointer) {
 		return
 	}
 
-	for i := 0; i < len(pointers); i++ {
+	prevPtr := pointers[0]
 
-		prevPtr := pointers[i]
+	for i := 1; i < len(pointers); i++ {
+		currPtr := pointers[i]
 
-		for k := i + 1; k < len(pointers); k++ {
-			currPtr := pointers[k]
-
-			if uintptr(currPtr)-uintptr(prevPtr) > 1 {
-				newPtr := unsafe.Pointer(uintptr(prevPtr) + 1)
-				memory[k] = *(*byte)(currPtr)
-				pointers[k] = newPtr
-				*(*byte)(currPtr) = 0
-				break
-			}
+		if uintptr(currPtr)-uintptr(prevPtr) > 1 {
+			newPtr := unsafe.Pointer(uintptr(prevPtr) + 1)
+			memory[i] = *(*byte)(currPtr)
+			pointers[i] = newPtr
+			*(*byte)(currPtr) = 0
+			currPtr = newPtr
 		}
+
+		prevPtr = currPtr
 	}
 }
 
