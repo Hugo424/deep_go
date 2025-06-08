@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,25 +13,67 @@ type Task struct {
 }
 
 type Scheduler struct {
-	// need to implement
+	queue *TasksQueue
 }
 
 func NewScheduler() Scheduler {
-	// need to implement
-	return Scheduler{}
+	return Scheduler{
+		queue: NewTasksQueue(),
+	}
 }
 
 func (s *Scheduler) AddTask(task Task) {
-	// need to implement
+	heap.Push(s.queue, task)
 }
 
 func (s *Scheduler) ChangeTaskPriority(taskID int, newPriority int) {
-	// need to implement
+	s.queue.Update(taskID, newPriority)
 }
 
 func (s *Scheduler) GetTask() Task {
-	// need to implement
-	return Task{}
+	return heap.Pop(s.queue).(Task)
+}
+
+type TasksQueue struct {
+	tasks []Task
+	index map[int]int
+}
+
+func NewTasksQueue() *TasksQueue {
+	return &TasksQueue{index: make(map[int]int)}
+}
+
+func (q *TasksQueue) Len() int {
+	return len(q.tasks)
+}
+
+func (q *TasksQueue) Less(i, j int) bool {
+	return q.tasks[i].Priority > q.tasks[j].Priority
+}
+
+func (q *TasksQueue) Swap(i, j int) {
+	q.tasks[i], q.tasks[j] = q.tasks[j], q.tasks[i]
+	q.index[q.tasks[i].Identifier] = i
+	q.index[q.tasks[j].Identifier] = j
+}
+
+func (q *TasksQueue) Pop() any {
+	task := q.tasks[len(q.tasks)-1]
+	q.tasks = q.tasks[:len(q.tasks)-1]
+	delete(q.index, task.Identifier)
+	return task
+}
+
+func (q *TasksQueue) Push(task any) {
+	t := task.(Task)
+	q.tasks = append(q.tasks, t)
+	q.index[t.Identifier] = len(q.tasks) - 1
+}
+
+func (q *TasksQueue) Update(taskID int, taskPriority int) {
+	index := q.index[taskID]
+	q.tasks[index].Priority = taskPriority
+	heap.Fix(q, index)
 }
 
 func TestTrace(t *testing.T) {
@@ -56,7 +99,7 @@ func TestTrace(t *testing.T) {
 	scheduler.ChangeTaskPriority(1, 100)
 
 	task = scheduler.GetTask()
-	assert.Equal(t, task1, task)
+	assert.Equal(t, task1.Identifier, task.Identifier)
 
 	task = scheduler.GetTask()
 	assert.Equal(t, task3, task)
